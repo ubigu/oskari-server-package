@@ -1,9 +1,8 @@
 name: Publish package to GitHub Packages
 on:
-  push:
-    tags:
-      - '2.*'
-      - '3.*'
+  release:
+    types: [created]
+
 
 jobs:
   publish:
@@ -13,6 +12,10 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+        repository: oskari/oskari-server
+        token: ${{ secrets.GITHUB_TOKEN }}
+        ref: refs/tags/${{ github.ref_name }}
+
       - uses: actions/setup-java@v4
         with:
           java-version: '11'
