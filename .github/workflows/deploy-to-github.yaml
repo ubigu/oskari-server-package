@@ -17,6 +17,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           ref: refs/tags/${{ github.ref_name }}
 
+      - name: 'Pull package utils from this repo'
+        uses: actions/checkout@v4
+        with:
+          path: packageutils
+
+      - name: 'Apply patches from package utils'
+        run: git apply packageutils/patches/oskari-pom.xml-deploy.patch
+
       - uses: actions/setup-java@v4
         with:
           java-version: '11'
@@ -25,6 +33,7 @@ jobs:
 
       - name: Force version
         run: mvn --no-transfer-progress --batch-mode versions:set -DnewVersion=${{github.ref_name}}
+
       - name: Publish package
         run: mvn --no-transfer-progress --batch-mode deploy -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/${{github.repository}}
         env:
